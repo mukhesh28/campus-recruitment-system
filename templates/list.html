@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ module|capitalize }}</h2>
+<form method="get"><input name="search" placeholder="Search by {{ fields[0] }}" value="{{ search }}" style="width:70%">
+ <button>Search</button> <a class="btn" href="/{{ module }}/add">+ Add New</a></form>
+<table>
+ <tr><th>ID</th>{% for f in fields %}<th>{{ f }}</th>{% endfor %}<th>Action</th></tr>
+ {% for r in rows %}
+ <tr><td>{{ r["id"] }}</td>{% for f in fields %}<td>{{ r[f] }}</td>{% endfor %}
+  <td><a class="btn" href="/{{ module }}/edit/{{ r['id'] }}">Edit</a>
+      <a class="btn red" href="/{{ module }}/delete/{{ r['id'] }}" onclick="return confirm('Delete?')">Delete</a></td></tr>
+ {% endfor %}
+</table>
+{% endblock %}

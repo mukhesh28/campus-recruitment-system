@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+{% for name, count in counts.items() %}
+ <a class="card" href="/{{ name }}" style="text-decoration:none;color:#000">
+  <h1>{{ count }}</h1>{{ name|capitalize }}</a>
+{% endfor %}
+{% endblock %}

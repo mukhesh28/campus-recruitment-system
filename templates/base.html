@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Campus Recruitment System</title>
+<style>
+ body{font-family:Arial,sans-serif;margin:0;background:#f4f6f9}
+ nav{background:#1f3a5f;padding:12px}
+ nav a{color:#fff;margin-right:16px;text-decoration:none}
+ .box{max-width:900px;margin:24px auto;background:#fff;padding:24px;border-radius:8px}
+ table{width:100%;border-collapse:collapse}
+ th,td{border:1px solid #ddd;padding:8px;text-align:left}
+ th{background:#eef1f6}
+ input{width:100%;padding:8px;margin:4px 0 12px;box-sizing:border-box}
+ button,.btn{background:#1f3a5f;color:#fff;padding:8px 14px;border:0;border-radius:4px;text-decoration:none;cursor:pointer}
+ .red{background:#c0392b}
+ .card{display:inline-block;background:#eef1f6;padding:20px;margin:8px;border-radius:8px;min-width:120px;text-align:center}
+</style>
+</head>
+<body>
+{% if session.admin %}
+<nav>
+ <a href="/dashboard">Dashboard</a><a href="/students">Students</a><a href="/colleges">Colleges</a>
+ <a href="/companies">Companies</a><a href="/jobs">Jobs</a><a href="/placements">Placements</a>
+ <a href="/logout">Logout</a>
+</nav>
+{% endif %}
+<div class="box">{% block content %}{% endblock %}</div>
+</body>
+</html>
