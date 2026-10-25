@@ -1,12 +1,9 @@
 from flask import Flask, render_template, request, redirect, session, abort
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "campus-secret-key"
-
-# Admin login details (change if you want)
-ADMIN_USER = "admin"
-ADMIN_PASS = "admin123"
 
 # Each module = table name and its columns
 MODULES = {
@@ -28,6 +25,11 @@ def init_db():
         cols = ", ".join(f + " TEXT" for f in fields)
         conn.execute("CREATE TABLE IF NOT EXISTS " + table +
                      " (id INTEGER PRIMARY KEY AUTOINCREMENT, " + cols + ")")
+    conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT)")
+    # default account so admin / admin123 still works
+    if not conn.execute("SELECT 1 FROM users WHERE username='admin'").fetchone():
+        conn.execute("INSERT INTO users (username, password) VALUES (?, ?)",
+                     ("admin", generate_password_hash("admin123")))
     conn.commit()
     conn.close()
 
@@ -38,11 +40,34 @@ def login_required():
 def login():
     error = None
     if request.method == "POST":
-        if request.form["username"] == ADMIN_USER and request.form["password"] == ADMIN_PASS:
+        conn = get_db()
+        user = conn.execute("SELECT * FROM users WHERE username=?",
+                            (request.form["username"].strip(),)).fetchone()
+        conn.close()
+        if user and check_password_hash(user["password"], request.form["password"]):
             session["admin"] = True
+            session["username"] = user["username"]
             return redirect("/dashboard")
         error = "Invalid Login/Password"
     return render_template("login.html", error=error)
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    error = None
+    if request.method == "POST":
+        username = request.form["username"].strip()
+        password = request.form["password"]
+        conn = get_db()
+        try:
+            conn.execute("INSERT INTO users (username, password) VALUES (?, ?)",
+                         (username, generate_password_hash(password)))
+            conn.commit()
+            conn.close()
+            return redirect("/")
+        except sqlite3.IntegrityError:
+            conn.close()
+            error = "Username already exists. Try another."
+    return render_template("register.html", error=error)
 
 @app.route("/logout")
 def logout():
