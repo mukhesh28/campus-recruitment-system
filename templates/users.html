@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Users{% endblock %}
+{% block content %}
+<div class="page-head"><h2>👥 System Users <span class="count">{{ users|length }}</span></h2>
+<div class="actions"><form class="search" method="get"><input name="q" value="{{ q }}" placeholder="Search users..."><button class="btn">Search</button>{% if q %}<a class="btn ghost" href="/admin/users">Clear</a>{% endif %}</form><a class="btn primary" href="/admin/users/add">+ Add User</a></div></div>
+<div class="card table-wrap"><table><thead><tr><th>ID</th><th>Username</th><th>Name</th><th>Email</th><th>Date of Birth</th><th>Role (assign)</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+{% for u in users %}<tr><td>{{ u.id }}</td><td><b>{{ u.username }}</b></td><td>{{ u.full_name or '—' }}</td><td>{{ u.email or '—' }}</td><td>{{ u.dob or '—' }}</td>
+<td><form method="post" action="/admin/users/{{ u.id }}/role" class="inline">{{ csrf_field() }}<select name="role" {{ 'disabled' if u.id == user.id }}>{% for r in roles %}<option {{ 'selected' if u.role == r }}>{{ r }}</option>{% endfor %}</select>{% if u.id != user.id %}<button class="btn sm">Save</button>{% endif %}</form></td>
+<td>{{ u.created_at }}</td><td>{% if u.id != user.id %}<form method="post" action="/admin/users/{{ u.id }}/delete" onsubmit='return confirm({{ ("Delete user " ~ u.username ~ "?")|tojson }})'>{{ csrf_field() }}<button class="btn sm danger">Delete</button></form>{% else %}<span class="muted">You</span>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

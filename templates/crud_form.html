@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}{{ 'Edit' if editing else 'Add' }} {{ cfg.title }}{% endblock %}
+{% block content %}
+<div class="card form-card"><h2>{{ cfg.icon }} {{ 'Edit' if editing else 'Add New' }} {{ cfg.title[:-1] if cfg.title.endswith('s') else cfg.title }}</h2>
+<form method="post">{{ csrf_field() }}
+{% for f in cfg.fields if f[0] not in forced %}
+  <label>{{ f[1] }}{% if f[2] != 'textarea' and f[0] not in cfg.optional %} <em>*</em>{% endif %}</label>
+  {% set val = data.get(f[0]) %}
+  {% if f[2] == 'textarea' %}<textarea name="{{ f[0] }}" rows="3">{{ val or '' }}</textarea>
+  {% elif f[2] == 'suggest' %}<input name="{{ f[0] }}" list="dl_{{ f[0] }}" value="{{ val or '' }}" autocomplete="off" placeholder="Pick from the list or type your own"><datalist id="dl_{{ f[0] }}">{% for o in f[3] %}<option value="{{ o }}">{% endfor %}</datalist>
+  {% elif f[2] == 'choice' %}<select name="{{ f[0] }}">{% for o in f[3] %}<option {{ 'selected' if val == o }}>{{ o }}</option>{% endfor %}</select>
+  {% elif f[2].startswith('select:') %}<select name="{{ f[0] }}"><option value="">-- select --</option>{% for id, nm in lookups[f[0]].items() %}<option value="{{ id }}" {{ 'selected' if val|string == id|string }}>{{ nm }}</option>{% endfor %}</select>
+  {% elif f[2] == 'number' %}<input type="number" step="any" min="0" name="{{ f[0] }}" value="{{ val if val is not none else '' }}">
+  {% else %}<input type="{{ 'email' if f[2]=='email' else 'text' }}" name="{{ f[0] }}" value="{{ val or '' }}">{% endif %}
+{% endfor %}
+<div class="form-actions"><button class="btn primary">Save</button><a class="btn ghost" href="/m/{{ module }}">Cancel</a></div>
+</form></div>
+{% endblock %}

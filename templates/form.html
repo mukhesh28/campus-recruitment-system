@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>{{ "Edit" if row else "Add" }} {{ module|capitalize }}</h2>
-<form method="post">
- {% for f in fields %}{{ f }} <input name="{{ f }}" value="{{ row[f] if row else '' }}" required>{% endfor %}
- <button>Save</button> <a href="/{{ module }}">Cancel</a>
-</form>
-{% endblock %}

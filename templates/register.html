@@ -1,11 +1,38 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% block title %}Register{% endblock %}
 {% block content %}
-<h2>Create New Account</h2>
-{% if error %}<p style="color:red">{{ error }}</p>{% endif %}
-<form method="post">
- Choose Username <input name="username" required>
- Choose Password <input name="password" type="password" required>
- <button>Register</button>
-</form>
-<p>Already have an account? <a href="/">Login here</a></p>
+<div class="card auth-card wide">
+  <h2>Create Account</h2>
+  <p class="muted">Choose <b>any username and password</b> you like (letters, numbers, spaces or symbols).</p>
+  <form method="post">{{ csrf_field() }}
+    <div class="grid2">
+      <div><label>I am a</label>
+        <select name="role" id="role" onchange="toggleRole()"><option value="student" {{ 'selected' if data.get('role')!='company' }}>Student</option><option value="company" {{ 'selected' if data.get('role')=='company' }}>Company</option></select></div>
+      <div><label>Full Name / Company Name</label><input name="full_name" value="{{ data.get('full_name','') }}" required></div>
+      <div><label>Username (anything you like)</label><input name="username" value="{{ data.get('username','') }}" required></div>
+      <div><label>Email (needed for email password reset)</label><input name="email" type="email" value="{{ data.get('email','') }}"></div>
+      <div><label>Mobile (10 digits)</label><input name="mobile" value="{{ data.get('mobile','') }}"></div>
+      <div><label>Date of Birth</label><input name="dob" type="date" value="{{ data.get('dob','') }}"></div>
+      <div><label>Address</label><input name="address" value="{{ data.get('address','') }}"></div>
+      <div id="stu"><label>College</label><select name="college_id" onchange="toggleCollege()"><option value="">-- select --</option>{% for c in colleges %}<option value="{{ c.id }}" {{ 'selected' if data.get('college_id')|string == c.id|string }}>{{ c.name }}</option>{% endfor %}<option value="other" {{ 'selected' if data.get('college_id') == 'other' }}>➕ My college is not listed</option></select>
+        <input name="college_other" id="other" placeholder="Type your college name" value="{{ data.get('college_other','') }}" style="display:none;margin-top:6px"></div>
+      <div id="stu2"><label>Course / Branch</label><input name="course" value="{{ data.get('course','') }}" placeholder="B.Tech CSE"></div>
+      <div id="stu3"><label>Skills / Programming languages</label><input name="skills" value="{{ data.get('skills','') }}" placeholder="Python, Java, SQL, React"></div>
+      <div id="com" style="display:none"><label>Company Type</label><select name="ctype">{% for t in ctypes %}<option>{{ t }}</option>{% endfor %}</select></div>
+      <div><label>Password (anything you like)</label><input name="password" id="pw" type="password" required oninput="strength()"><small id="st" class="muted"></small></div>
+      <div><label>Confirm Password</label><input name="confirm" type="password" required></div>
+      <div><label>Security Question</label><select name="sec_q">{% for q in questions %}<option {{ 'selected' if data.get('sec_q')==q }}>{{ q }}</option>{% endfor %}</select></div>
+      <div><label>Security Answer</label><input name="sec_a" required></div>
+    </div>
+    <button class="btn primary block">Register</button>
+  </form>
+  <p class="links">Already have an account? <a href="/">Login</a></p>
+</div>
+<script>
+function toggleRole(){var c=document.getElementById('role').value=='company';
+ ['stu','stu2','stu3'].forEach(function(i){document.getElementById(i).style.display=c?'none':'block';});document.getElementById('com').style.display=c?'block':'none';}
+function toggleCollege(){var s=document.getElementsByName('college_id')[0];document.getElementById('other').style.display=s.value=='other'?'block':'none';}
+function strength(){var v=document.getElementById('pw').value,s=0;if(v.length>=6)s++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;if(/\d/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+ var t=['Weak (but allowed)','Weak (but allowed)','Medium','Strong','Very strong'];document.getElementById('st').textContent=v?('Strength: '+t[s]):'';}
+toggleRole();toggleCollege();
+</script>
 {% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Jobs{% endblock %}
+{% block content %}
+<div class="page-head"><h2>🔎 Browse Jobs <span class="count">{{ jobs|length }}</span></h2>
+<form class="search" method="get"><input name="q" value="{{ q }}" placeholder="Search job, company, location..."><select name="type"><option value="">All types</option>{% for x in types %}<option {{ 'selected' if t == x }}>{{ x }}</option>{% endfor %}</select><button class="btn">Search</button></form></div>
+<div class="cards">{% for j in jobs %}
+<div class="card job"><div class="job-top"><h3>{{ j.name }}</h3><span class="badge s-{{ j.status|lower }}">{{ j.status }}</span></div>
+<p class="muted">🏢 {{ j.company or '—' }} · 📍 {{ j.location or '—' }}</p>
+<p>💰 {{ j.salary or '—' }} · 🕒 {{ j.type }} · 👥 {{ j.openings }} openings</p>
+{% if j.skills %}<p class="skills">🛠 {{ j.skills }}</p>{% endif %}
+{% if j.match %}<p><span class="match m-{{ 'hi' if j.match.pct >= 70 else ('mid' if j.match.pct >= 40 else 'lo') }}">{{ j.match.pct }}% match with your skills</span></p>{% endif %}
+<p class="muted">{{ (j.description or '')[:90] }}{{ '...' if (j.description or '')|length > 90 }}</p>
+<div class="job-foot">{% if j.my_status %}<span class="badge s-{{ j.my_status|lower|replace(' ','-') }}">{{ j.my_status }}</span>{% else %}<span></span>{% endif %}<a class="btn primary sm" href="/jobs/{{ j.id }}">View details</a></div></div>
+{% else %}<div class="card center">No jobs match your search.</div>{% endfor %}</div>
+{% endblock %}

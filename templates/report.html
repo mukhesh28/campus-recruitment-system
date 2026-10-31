@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="page-head"><h2>📊 {{ title }} <span class="count">{{ rows|length }}</span></h2>
+<div class="actions no-print"><form class="search" method="get"><input name="q" value="{{ q }}" placeholder="Filter this report..."><button class="btn">Filter</button></form>
+<a class="btn" href="/reports/{{ name }}?format=csv&q={{ q }}">⬇ CSV</a><button class="btn" onclick="window.print()">🖨 Print</button><a class="btn ghost" href="/reports">Back</a></div></div>
+<p class="muted">Generated on {{ generated }}</p>
+<div class="card table-wrap"><table><thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr></thead><tbody>
+{% for r in rows %}<tr>{% for c in r %}<td>{{ '—' if c is none else c }}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ headers|length }}" class="empty">No data.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

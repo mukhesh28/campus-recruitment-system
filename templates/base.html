@@ -1,29 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Campus Recruitment System</title>
-<style>
- body{font-family:Arial,sans-serif;margin:0;background:#f4f6f9}
- nav{background:#1f3a5f;padding:12px}
- nav a{color:#fff;margin-right:16px;text-decoration:none}
- .box{max-width:900px;margin:24px auto;background:#fff;padding:24px;border-radius:8px}
- table{width:100%;border-collapse:collapse}
- th,td{border:1px solid #ddd;padding:8px;text-align:left}
- th{background:#eef1f6}
- input{width:100%;padding:8px;margin:4px 0 12px;box-sizing:border-box}
- button,.btn{background:#1f3a5f;color:#fff;padding:8px 14px;border:0;border-radius:4px;text-decoration:none;cursor:pointer}
- .red{background:#c0392b}
- .card{display:inline-block;background:#eef1f6;padding:20px;margin:8px;border-radius:8px;min-width:120px;text-align:center}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Campus Recruitment System{% endblock %} · CampusHire</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-{% if session.admin %}
-<nav>
- <a href="/dashboard">Dashboard</a><a href="/students">Students</a><a href="/colleges">Colleges</a>
- <a href="/companies">Companies</a><a href="/jobs">Jobs</a><a href="/placements">Placements</a>
- <a href="/logout">Logout</a>
-</nav>
-{% endif %}
-<div class="box">{% block content %}{% endblock %}</div>
+<body class="{{ 'app' if user else 'auth' }}">
+{% if user %}
+<aside class="sidebar">
+  <div class="brand">🎓 CampusHire</div>
+  <nav>{% for label, url, icon in nav %}
+    <a href="{{ url }}" class="{{ 'active' if request.path == url or (url != '/dashboard' and request.path.startswith(url + '/')) else '' }}">{{ icon }} {{ label }}</a>
+  {% endfor %}</nav>
+</aside>
+<div class="main">
+  <header class="topbar"><div class="crumb">{{ self.title() }}</div>
+    <div class="who">👤 {{ user.full_name or user.username }} <span class="badge b-{{ user.role }}">{{ user.role|capitalize }}</span></div>
+  </header>
+{% else %}<div class="main">{% endif %}
+  <main class="content">
+    {% with msgs = get_flashed_messages(with_categories=true) %}{% for c, m in msgs %}<div class="alert a-{{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+<script>
+document.querySelectorAll('input[type=password]').forEach(function(i){var b=document.createElement('button');b.type='button';b.className='pw-toggle';b.textContent='Show';
+ b.onclick=function(){i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'Show':'Hide';};i.insertAdjacentElement('afterend',b);});
+</script>
 </body>
 </html>

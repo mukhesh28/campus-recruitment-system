@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}My Profile{% endblock %}
+{% block content %}<div class="card form-card"><h2>👤 Update My Profile</h2>
+<p class="muted">Username: <b>{{ user.username }}</b> · Role: <b>{{ user.role|capitalize }}</b> · Member since {{ user.created_at }}</p>
+<form method="post">{{ csrf_field() }}<div class="grid2">
+<div><label>Full Name</label><input name="full_name" value="{{ user.full_name or '' }}" required></div>
+<div><label>Email</label><input name="email" value="{{ user.email or '' }}"></div>
+<div><label>Mobile</label><input name="mobile" value="{{ user.mobile or '' }}"></div>
+<div><label>Date of Birth</label><input name="dob" type="date" value="{{ user.dob or '' }}"></div>
+<div><label>Address</label><input name="address" value="{{ user.address or '' }}"></div>
+{% if user.role == 'student' and extra %}
+<div><label>Course / Branch</label><input name="course" value="{{ extra.course or '' }}"></div>
+<div><label>College</label><select name="college_id" onchange="document.getElementById('other').style.display=this.value=='other'?'block':'none'"><option value="">-- select --</option>{% for c in colleges %}<option value="{{ c.id }}" {{ 'selected' if extra.college_id == c.id }}>{{ c.name }}</option>{% endfor %}<option value="other">➕ My college is not listed</option></select>
+<input name="college_other" id="other" placeholder="Type your college name" style="display:none;margin-top:6px"></div>
+<div><label>Skills / Programming languages</label><input name="skills" value="{{ extra.skills or '' }}" placeholder="Python, Java, SQL"></div>
+{% elif user.role == 'company' and extra %}
+<div><label>Company Type</label><select name="ctype">{% for t in ctypes %}<option {{ 'selected' if extra.type == t }}>{{ t }}</option>{% endfor %}</select></div>
+<div><label>About Company</label><input name="description" value="{{ extra.description or '' }}"></div>
+{% endif %}</div>
+<h3 style="margin-top:18px">Security question (used to reset your password)</h3><div class="grid2"><div><label>Question</label><select name="sec_q">{% for q in questions %}<option {{ 'selected' if user.sec_q == q }}>{{ q }}</option>{% endfor %}</select></div><div><label>Answer (leave empty to keep the current one)</label><input name="sec_a"></div></div>
+<button class="btn primary" style="margin-top:14px">Save Changes</button></form></div>{% endblock %}

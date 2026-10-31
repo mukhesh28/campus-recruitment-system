@@ -1,8 +1,30 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}
 {% block content %}
-<h2>Admin Dashboard</h2>
-{% for name, count in counts.items() %}
- <a class="card" href="/{{ name }}" style="text-decoration:none;color:#000">
-  <h1>{{ count }}</h1>{{ name|capitalize }}</a>
-{% endfor %}
+<h2>Hello, {{ user.full_name or user.username }} 👋</h2>
+<div class="stats">{% for label, n, icon, url in stats %}<a class="stat" href="{{ url }}"><span class="ico">{{ icon }}</span><b>{{ n }}</b><small>{{ label }}</small></a>{% endfor %}</div>
+
+{% if user.role in ('admin','staff') %}
+<div class="grid2 gap">
+  <div class="card"><h3>Placement Rate</h3>
+    <div class="ring" style="--p:{{ rate }}"><span>{{ rate }}%</span></div>
+    <p class="center muted">{{ placed }} of {{ total }} students placed</p></div>
+  <div class="card"><h3>Applications by Status</h3>
+    {% set mx = (status_counts|map(attribute=1)|max) or 1 %}
+    {% for s, c in status_counts %}<div class="bar-row"><span>{{ s }}</span><div class="bar"><i style="width:{{ c * 100 / mx }}%"></i></div><b>{{ c }}</b></div>{% endfor %}</div>
+  <div class="card"><h3>Top Companies by Applications</h3>
+    {% set mx2 = (top|map(attribute=1)|max) or 1 %}
+    {% for t in top %}<div class="bar-row"><span>{{ t.name }}</span><div class="bar"><i style="width:{{ t.c * 100 / mx2 }}%"></i></div><b>{{ t.c }}</b></div>{% endfor %}</div>
+  <div class="card"><h3>Recent Applications</h3>
+    <table class="mini">{% for r in recent %}<tr><td>{{ r.student }}</td><td>{{ r.job }}</td><td><span class="badge s-{{ r.status|lower|replace(' ','-') }}">{{ r.status }}</span></td></tr>{% else %}<tr><td class="empty">No applications yet.</td></tr>{% endfor %}</table></div>
+</div>
+{% elif user.role == 'company' %}
+<div class="card"><h3>Recent Applicants</h3><table class="mini">{% for r in recent %}<tr><td>{{ r.student }}</td><td>{{ r.job }}</td><td><span class="badge s-{{ r.status|lower|replace(' ','-') }}">{{ r.status }}</span></td><td>{{ r.applied_at }}</td></tr>{% else %}<tr><td class="empty">No applicants yet. Post a job to get started.</td></tr>{% endfor %}</table>
+<a class="btn primary" href="/m/jobs/add">+ Post a New Job</a></div>
+{% else %}
+{% if quals == 0 %}<div class="alert a-warning">You have no qualifications added yet. <a href="/m/qualifications/add">Add your qualifications</a> so companies can see them.</div>{% endif %}
+<div class="grid2 gap">
+  <div class="card"><h3>Latest Open Jobs</h3>{% for j in latest %}<div class="job-mini"><div><b>{{ j.name }}</b><br><small>{{ j.company }} · {{ j.type }} · {{ j.salary }}</small>{% if j.match %} <span class="match m-{{ 'hi' if j.match.pct >= 70 else ('mid' if j.match.pct >= 40 else 'lo') }}">{{ j.match.pct }}% match</span>{% endif %}</div><a class="btn sm" href="/jobs/{{ j.id }}">View</a></div>{% endfor %}<a href="/jobs">See all jobs →</a></div>
+  <div class="card"><h3>My Recent Applications</h3><table class="mini">{% for r in recent %}<tr><td>{{ r.job }}</td><td>{{ r.company }}</td><td><span class="badge s-{{ r.status|lower|replace(' ','-') }}">{{ r.status }}</span></td></tr>{% else %}<tr><td class="empty">You have not applied to any job yet.</td></tr>{% endfor %}</table></div>
+</div>
+{% endif %}
 {% endblock %}

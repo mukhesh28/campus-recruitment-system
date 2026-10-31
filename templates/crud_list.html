@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}{{ cfg.title }}{% endblock %}
+{% block content %}
+<div class="page-head"><h2>{{ cfg.icon }} {{ cfg.title }} <span class="count">{{ rows|length }}</span></h2>
+  <div class="actions">
+    <form class="search" method="get"><input name="q" value="{{ q }}" placeholder="Search {{ cfg.title|lower }}..."><button class="btn">Search</button>{% if q %}<a class="btn ghost" href="/m/{{ module }}">Clear</a>{% endif %}</form>
+    {% if 'c' in actions %}<a class="btn primary" href="/m/{{ module }}/add">+ Add New</a>{% endif %}
+  </div></div>
+<div class="card table-wrap"><table>
+  <thead><tr><th>#</th>{% for h in headers %}<th>{{ h }}</th>{% endfor %}<th>Actions</th></tr></thead>
+  <tbody>
+  {% for r in rows %}<tr><td>{{ loop.index }}</td>
+    {% for n, v in r.cells %}<td>{% if n == 'status' %}<span class="badge s-{{ v|lower|replace(' ','-') }}">{{ v }}</span>{% else %}{{ v }}{% endif %}</td>{% endfor %}
+    <td class="row-actions">
+      <a class="btn sm" href="{{ '/students/' ~ r.id if module == 'students' else '/m/' ~ module ~ '/' ~ r.id }}">View</a>
+      {% if 'u' in actions %}<a class="btn sm" href="/m/{{ module }}/{{ r.id }}/edit">Edit</a>{% endif %}
+      {% if 'd' in actions %}<form method="post" action="/m/{{ module }}/{{ r.id }}/delete" onsubmit="return confirm('Delete this record?')">{{ csrf_field() }}<button class="btn sm danger">Delete</button></form>{% endif %}
+    </td></tr>
+  {% else %}<tr><td colspan="{{ headers|length + 2 }}" class="empty">No records found.</td></tr>{% endfor %}
+  </tbody></table></div>
+{% endblock %}

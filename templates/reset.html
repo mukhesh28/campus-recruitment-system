@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Set New Password{% endblock %}
+{% block content %}<div class="card auth-card"><h2>Set a New Password</h2>
+<form method="post">{{ csrf_field() }}<label>New Password</label><input name="password" type="password" required autofocus><label>Confirm Password</label><input name="confirm" type="password" required>
+<button class="btn primary block">Save Password</button></form></div>{% endblock %}

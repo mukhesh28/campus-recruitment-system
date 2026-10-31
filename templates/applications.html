@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}Applications{% endblock %}
+{% block content %}
+<div class="page-head"><h2>📨 Applications <span class="count">{{ rows|length }}</span></h2>
+<form class="search" method="get"><select name="status"><option value="">All statuses</option>{% for s in statuses %}<option {{ 'selected' if status == s }}>{{ s }}</option>{% endfor %}</select>{% if job %}<input type="hidden" name="job" value="{{ job }}">{% endif %}<button class="btn">Filter</button></form></div>
+<div class="card table-wrap"><table><thead><tr><th>#</th>{% if user.role != 'student' %}<th>Student</th><th>Course</th><th>College</th><th>Skill match</th>{% endif %}<th>Job</th>{% if user.role != 'company' %}<th>Company</th>{% endif %}<th>Applied</th><th>Interview</th><th>Status</th><th>Action</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ loop.index }}</td>
+{% if user.role != 'student' %}<td><a href="/students/{{ r.sid }}">{{ r.student }}</a></td><td>{{ r.course or '—' }}</td><td>{{ r.college or '—' }}</td>
+<td>{% if r.match %}<span class="match m-{{ 'hi' if r.match.pct >= 70 else ('mid' if r.match.pct >= 40 else 'lo') }}">{{ r.match.pct }}%</span>{% else %}—{% endif %}</td>{% endif %}
+<td><a href="/jobs/{{ r.jid }}">{{ r.job }}</a></td>{% if user.role != 'company' %}<td>{{ r.company or '—' }}</td>{% endif %}<td>{{ r.applied_at }}</td>
+<td>{{ r.interview_at or '—' }}</td>
+<td><span class="badge s-{{ r.status|lower|replace(' ','-') }}">{{ r.status }}</span></td>
+<td class="row-actions">{% if can_update %}<form method="post" action="/applications/{{ r.id }}/status" class="inline wrap">{{ csrf_field() }}
+<select name="status" onchange="this.form.interview_at.style.display=this.value=='Interview Scheduled'?'block':'none'">{% for s in statuses %}<option {{ 'selected' if s == r.status }}>{{ s }}</option>{% endfor %}</select>
+<input type="datetime-local" name="interview_at" style="display:{{ 'block' if r.status == 'Interview Scheduled' else 'none' }};width:auto" title="Interview date and time">
+<button class="btn sm">Update</button></form>
+{% elif r.status == 'Applied' %}<form method="post" action="/applications/{{ r.id }}/withdraw" onsubmit="return confirm('Withdraw this application?')">{{ csrf_field() }}<button class="btn sm danger">Withdraw</button></form>{% else %}—{% endif %}</td></tr>
+{% else %}<tr><td colspan="11" class="empty">No applications found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

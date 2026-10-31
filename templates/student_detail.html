@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Student Profile{% endblock %}
+{% block content %}
+<div class="page-head"><h2>🎓 {{ s.name }}</h2><a class="btn ghost" href="/m/students">← Back</a></div>
+<div class="grid2 gap">
+<div class="card"><h3>Details</h3><table class="mini"><tr><td>Email</td><td>{{ s.email or '—' }}</td></tr><tr><td>Mobile</td><td>{{ s.mobile or '—' }}</td></tr><tr><td>Course</td><td>{{ s.course or '—' }}</td></tr><tr><td>College</td><td>{{ s.college or '—' }}</td></tr><tr><td>Skills</td><td>{{ s.skills or '—' }}</td></tr><tr><td>Address</td><td>{{ s.address or '—' }}</td></tr></table></div>
+<div class="card"><h3>Qualifications</h3><table class="mini">{% for q in quals %}<tr><td><b>{{ q.type }}</b></td><td>{{ q.percentage }}</td><td>{{ q.description or '' }}</td></tr>{% else %}<tr><td class="empty">None added.</td></tr>{% endfor %}</table></div>
+</div>
+<div class="card"><h3>Applications</h3><table class="mini">{% for a in apps %}<tr><td>{{ a.job }}</td><td>{{ a.company }}</td><td><span class="badge s-{{ a.status|lower|replace(' ','-') }}">{{ a.status }}</span></td><td>{{ a.applied_at }}</td></tr>{% else %}<tr><td class="empty">No applications.</td></tr>{% endfor %}</table></div>
+{% endblock %}

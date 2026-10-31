@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Reset Password{% endblock %}
+{% block content %}<div class="card auth-card wide"><h2>Reset Password</h2><p class="muted">Step 2 of 2 - account: <b>{{ username }}</b>. Choose one option.</p>
+<div class="grid2">
+<div><h3>Option 1: Security question</h3>
+<form method="post">{{ csrf_field() }}<label>{{ question }}</label><input name="answer" required>
+<label>New Password</label><input name="password" type="password" required><label>Confirm Password</label><input name="confirm" type="password" required>
+<button class="btn primary block">Reset Password</button></form></div>
+<div><h3>Option 2: Email reset link</h3>
+{% if has_email %}<p class="muted">We will send a reset link to <b>{{ email }}</b> (valid for 30 minutes).</p>
+<form method="post" action="/forgot/email">{{ csrf_field() }}<button class="btn block">📧 Send reset link to my email</button></form>
+{% if demo %}<div class="mailbox"><b>📬 Your reset link</b><br><small>To: {{ demo.to }}<br>Open this link to reset your password:</small><br><a href="{{ demo.link }}">{{ demo.link }}</a></div>{% endif %}
+{% else %}<p class="muted">This account has no email address saved, so use Option 1.</p>{% endif %}</div>
+</div></div>{% endblock %}

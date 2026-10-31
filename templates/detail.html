@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}{{ cfg.title }} Details{% endblock %}
+{% block content %}
+<div class="page-head"><h2>{{ cfg.icon }} {{ cfg.title[:-1] if cfg.title.endswith('s') else cfg.title }} Details</h2>
+<div class="actions"><a class="btn ghost" href="/m/{{ module }}">← Back</a>{% if 'u' in actions %}<a class="btn primary" href="/m/{{ module }}/{{ row['id'] }}/edit">Edit</a>{% endif %}</div></div>
+<div class="card"><table class="mini">{% for label, v in items %}<tr><td class="lbl">{{ label }}</td><td>{% if label == 'Status' %}<span class="badge s-{{ v|string|lower|replace(' ','-') }}">{{ v }}</span>{% else %}{{ v }}{% endif %}</td></tr>{% endfor %}</table></div>
+{% for title, heads, rows in related %}
+<div class="card"><h3>{{ title }} <span class="count">{{ rows|length }}</span></h3><table class="mini"><tr>{% for h in heads %}<th>{{ h }}</th>{% endfor %}</tr>
+{% for r in rows %}<tr>{% for c in r %}<td>{{ c if c not in (none, '') else '—' }}</td>{% endfor %}</tr>{% else %}<tr><td class="empty" colspan="{{ heads|length }}">Nothing yet.</td></tr>{% endfor %}</table></div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}{{ j.name }}{% endblock %}
+{% block content %}
+<div class="page-head"><h2>💼 {{ j.name }}</h2><a class="btn ghost" href="javascript:history.back()">← Back</a></div>
+<div class="card"><p><span class="badge s-{{ j.status|lower }}">{{ j.status }}</span> &nbsp; 🏢 <b>{{ j.company or '—' }}</b> ({{ j.ctype or '—' }}) · 📍 {{ j.location or '—' }}</p>
+<p>💰 {{ j.salary or '—' }} · 🕒 {{ j.type }} · 👥 {{ j.openings }} openings</p>{% if skills %}<h3>Required skills</h3><p>{% for k in skills %}<span class="chip {{ 'ok' if match and k in match.matched }}">{{ k }}</span>{% endfor %}</p>{% endif %}
+{% if match %}<p><span class="match m-{{ 'hi' if match.pct >= 70 else ('mid' if match.pct >= 40 else 'lo') }}">{{ match.pct }}% match with your profile</span>{% if match.missing %} &nbsp; Missing: <b>{{ match.missing|join(', ') }}</b> - add them in My Profile or My Qualifications{% endif %}</p>{% endif %}
+<h3>About the job</h3><p>{{ j.description or 'No description provided.' }}</p>
+{% if vac %}<h3>Vacancies</h3><table class="mini">{% for v in vac %}<tr><td><b>{{ v.type }}</b></td><td>{{ v.openings }} positions</td><td>{{ v.description or '' }}</td></tr>{% endfor %}</table>{% endif %}
+{% if user.role == 'student' %}<div class="form-actions">
+  {% if my %}<span class="badge s-{{ my.status|lower|replace(' ','-') }}">You applied · {{ my.status }}</span>{% if my.interview_at %} &nbsp; 📅 Interview: <b>{{ my.interview_at }}</b>{% endif %}
+  {% elif j.status == 'Open' %}<form method="post" action="/jobs/{{ j.id }}/apply">{{ csrf_field() }}<button class="btn primary">Apply Now</button></form>
+  {% else %}<span class="muted">This job is closed.</span>{% endif %}</div>{% endif %}</div>
+{% endblock %}

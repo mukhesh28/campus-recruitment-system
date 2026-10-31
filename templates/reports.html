@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% block title %}Reports{% endblock %}
+{% block content %}<h2>📊 Reports</h2><p class="muted">Generate, search, print or download any report as CSV.</p>
+<div class="cards">{% for k, t in items %}<a class="card report-card" href="/reports/{{ k }}"><h3>{{ t }}</h3><p class="muted">Open report →</p></a>{% endfor %}</div>{% endblock %}

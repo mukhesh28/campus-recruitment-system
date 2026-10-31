@@ -1,11 +1,17 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% block title %}Login{% endblock %}
 {% block content %}
-<h2>Campus Recruitment System - Admin Login</h2>
-{% if error %}<p style="color:red">{{ error }}</p>{% endif %}
-<form method="post">
- Username <input name="username" required>
- Password <input name="password" type="password" required>
- <button>Login</button>
-</form>
-<p>New user? <a href="/register">Register here</a></p>
+<div class="auth-wrap">
+  <div class="auth-hero"><h1>🎓 CampusHire</h1><p>Campus Recruitment System</p>
+    <ul><li>Students search and apply for jobs</li><li>Companies post jobs and shortlist students</li><li>Admin manages the full placement process</li></ul></div>
+  <div class="card auth-card">
+    <h2>Login</h2>
+    <form method="post">{{ csrf_field() }}
+      <label>Username or Email</label><input name="username" required autofocus>
+      <label>Password</label><input name="password" type="password" required>
+      <button class="btn primary block">Login</button>
+    </form>
+    <p class="links"><a href="/forgot">Forgot password?</a> · <a href="/register">Create your own account</a></p>
+    <p class="muted center small">New here? Register with <b>any username and password you like</b>.</p>
+  </div>
+</div>
 {% endblock %}

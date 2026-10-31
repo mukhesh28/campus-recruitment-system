@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Forgot Password{% endblock %}
+{% block content %}<div class="card auth-card"><h2>Forgot Password</h2><p class="muted">Step 1 of 2 - enter your username or email.</p>
+<form method="post">{{ csrf_field() }}<label>Username or Email</label><input name="username" required autofocus><button class="btn primary block">Continue</button></form>
+<p class="links"><a href="/">Back to login</a></p></div>{% endblock %}

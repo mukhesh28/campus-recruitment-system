@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}Roles & Permissions{% endblock %}
+{% block content %}
+<h2>🔐 Roles & Permissions</h2>
+<div class="card"><div class="page-head"><h3>Roles <span class="count">{{ roles|length }}</span></h3>
+<form class="search" method="get"><input name="q" value="{{ q }}" placeholder="Search roles..."><button class="btn">Search</button>{% if q %}<a class="btn ghost" href="/admin/permissions">Clear</a>{% endif %}</form></div>
+<table class="mini"><tr><th>Role</th><th>Description</th><th>Users</th><th>Actions</th></tr>
+{% for r in roles %}<tr><td><span class="badge b-{{ r.name }}">{{ r.name }}</span></td>
+<td><form method="post" action="/admin/roles/{{ r.id }}/edit" class="inline">{{ csrf_field() }}<input name="description" value="{{ r.description or '' }}"><button class="btn sm">Save</button></form></td>
+<td>{{ r.users }}</td><td>{% if r.name not in protected %}<form method="post" action="/admin/roles/{{ r.id }}/delete" onsubmit="return confirm('Delete this role?')">{{ csrf_field() }}<button class="btn sm danger">Delete</button></form>{% else %}<span class="muted">built-in</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="4" class="empty">No roles found.</td></tr>{% endfor %}</table>
+<h3 style="margin-top:18px">Add a new role</h3>
+<form method="post" action="/admin/roles/add" class="inline">{{ csrf_field() }}<input name="name" placeholder="role name e.g. hod" required><input name="description" placeholder="description"><button class="btn primary">+ Add Role</button></form>
+<p class="muted small">A new role works like Staff: tick below what it may manage, then assign it to a user from the Users page.</p></div>
+<div class="card"><h3>Permissions (what each staff-type role may manage)</h3><p class="muted">Admin always has full access. Company and Student have their own fixed portals.</p>
+<form method="post" action="/admin/permissions">{{ csrf_field() }}
+<div class="table-wrap"><table><tr><th>Role</th>{% for m in modules %}<th>{{ m|capitalize }}</th>{% endfor %}</tr>
+{% for role in staff_roles %}<tr><td><b>{{ role }}</b></td>{% for m in modules %}<td><input type="checkbox" class="cb" name="perm_{{ role }}" value="{{ m }}" {{ 'checked' if (role, m) in allowed }}></td>{% endfor %}</tr>{% endfor %}</table></div>
+<button class="btn primary" style="margin-top:12px">Save Permissions</button></form></div>
+{% endblock %}

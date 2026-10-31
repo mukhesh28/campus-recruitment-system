@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Add User{% endblock %}
+{% block content %}<div class="card form-card"><h2>👥 Add System User</h2>
+<form method="post">{{ csrf_field() }}<div class="grid2">
+<div><label>Full Name</label><input name="full_name" value="{{ data.get('full_name','') }}" required></div>
+<div><label>Username (anything)</label><input name="username" value="{{ data.get('username','') }}" required></div>
+<div><label>Email</label><input name="email" value="{{ data.get('email','') }}"></div>
+<div><label>Mobile</label><input name="mobile" value="{{ data.get('mobile','') }}"></div>
+<div><label>Date of Birth</label><input name="dob" type="date" value="{{ data.get('dob','') }}"></div>
+<div><label>Password (anything)</label><input name="password" type="password" required></div>
+<div><label>Role</label><select name="role">{% for r in roles %}<option {{ 'selected' if data.get('role') == r }}>{{ r }}</option>{% endfor %}</select></div></div>
+<div class="form-actions"><button class="btn primary">Create User</button><a class="btn ghost" href="/admin/users">Cancel</a></div></form></div>{% endblock %}
